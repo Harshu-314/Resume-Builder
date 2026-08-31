@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="100%" height="100%">
+  <rect width="400" height="260" fill="#0f172a" rx="12"/>
+  <!-- Minimalist Resume Page Mock -->
+  <g transform="translate(40, 20)">
+    <rect width="320" height="220" fill="#ffffff" rx="6" shadow="0 4px 12px rgba(0,0,0,0.1)"/>
+    <!-- Minimal Header -->
+    <rect x="25" y="25" width="140" height="12" rx="3" fill="#1e293b"/>
+    <rect x="25" y="44" width="200" height="6" rx="2" fill="#64748b"/>
+    <line x1="25" y1="58" x2="295" y2="58" stroke="#1e293b" stroke-width="1.5"/>
+    
+    <!-- Summary Section -->
+    <rect x="25" y="70" width="80" height="8" rx="2" fill="#1e293b"/>
+    <rect x="25" y="84" width="270" height="5" rx="1" fill="#94a3b8"/>
+    <rect x="25" y="93" width="250" height="5" rx="1" fill="#cbd5e1"/>
+    
+    <!-- Experience Section -->
+    <rect x="25" y="110" width="95" height="8" rx="2" fill="#1e293b"/>
+    <rect x="25" y="124" width="160" height="6" rx="2" fill="#334155"/>
+    <rect x="25" y="134" width="260" height="4" rx="1" fill="#94a3b8"/>
+    <rect x="25" y="142" width="240" height="4" rx="1" fill="#cbd5e1"/>
+    <rect x="25" y="150" width="220" height="4" rx="1" fill="#cbd5e1"/>
+
+    <!-- Skills Section -->
+    <rect x="25" y="165" width="60" height="8" rx="2" fill="#1e293b"/>
+    <rect x="25" y="178" width="50" height="14" rx="4" fill="#f1f5f9" stroke="#e2e8f0"/>
+    <rect x="82" y="178" width="45" height="14" rx="4" fill="#f1f5f9" stroke="#e2e8f0"/>
+    <rect x="134" y="178" width="55" height="14" rx="4" fill="#f1f5f9" stroke="#e2e8f0"/>
+    <rect x="196" y="178" width="40" height="14" rx="4" fill="#f1f5f9" stroke="#e2e8f0"/>
+  </g>
+</svg>

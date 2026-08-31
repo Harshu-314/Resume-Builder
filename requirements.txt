@@ -1,0 +1,15 @@
+Flask==3.0.3
+Flask-SQLAlchemy==3.1.1
+Flask-JWT-Extended==4.6.0
+Flask-Cors==4.0.1
+Flask-Limiter==3.8.0
+Flask-Bcrypt==1.0.1
+python-dotenv==1.0.1
+requests==2.32.3
+fpdf2==2.7.9
+email-validator==2.2.0
+gunicorn==22.0.0
+google-auth==2.34.0
+# GitHub/LinkedIn OAuth needs no new packages: requests (above) makes the
+# provider HTTP calls, and itsdangerous (a direct Flask dependency, already
+# installed transitively) signs the CSRF state and exchange-code tokens.

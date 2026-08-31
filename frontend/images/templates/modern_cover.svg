@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" width="100%" height="100%">
+  <rect width="400" height="260" fill="#1e1b4b" rx="12"/>
+  <g transform="translate(40, 20)">
+    <rect width="320" height="220" fill="#ffffff" rx="6"/>
+    <!-- Modern Accent Header Bar -->
+    <rect x="25" y="22" width="270" height="4" rx="2" fill="#2563eb"/>
+    <rect x="25" y="32" width="150" height="14" rx="3" fill="#2563eb"/>
+    <rect x="25" y="52" width="210" height="6" rx="2" fill="#64748b"/>
+    <line x1="25" y1="66" x2="295" y2="66" stroke="#2563eb" stroke-width="2"/>
+    
+    <!-- Experience Section -->
+    <rect x="25" y="78" width="90" height="8" rx="2" fill="#2563eb"/>
+    <rect x="25" y="92" width="170" height="6" rx="2" fill="#1e293b"/>
+    <rect x="25" y="102" width="265" height="4" rx="1" fill="#64748b"/>
+    <rect x="25" y="110" width="245" height="4" rx="1" fill="#94a3b8"/>
+    
+    <rect x="25" y="126" width="150" height="6" rx="2" fill="#1e293b"/>
+    <rect x="25" y="136" width="250" height="4" rx="1" fill="#64748b"/>
+    <rect x="25" y="144" width="230" height="4" rx="1" fill="#94a3b8"/>
+
+    <!-- Projects Section -->
+    <rect x="25" y="160" width="80" height="8" rx="2" fill="#2563eb"/>
+    <rect x="25" y="174" width="140" height="6" rx="2" fill="#3b82f6"/>
+    <rect x="25" y="184" width="255" height="4" rx="1" fill="#94a3b8"/>
+  </g>
+</svg>

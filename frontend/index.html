@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FOLIO — AI Career & Resume Studio</title>
+  <meta name="description" content="Editorial AI-powered resume studio. Build ATS-optimized resumes with real-time AI bullet polisher, deterministic ATS engine, recruiter advisor, and instant PDF downloads.">
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- html2pdf.js for client-side print fallback -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Google Identity Services (Sign in with Google) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Navigation Bar -->
+  <nav class="studio-navbar">
+    <div class="nav-brand" id="nav-brand-btn">
+      <div class="brand-mark">F</div>
+      <div class="brand-text">
+        <span class="brand-title">FOLIO</span>
+        <span class="brand-sub">Career & Resume Studio</span>
+      </div>
+    </div>
+
+    <!-- Navigation View Links -->
+    <div class="nav-links">
+      <button class="nav-tab active" data-target="view-landing">Overview</button>
+      <button class="nav-tab" data-target="view-dashboard" id="nav-dashboard-tab" style="display:none;">Dashboard</button>
+      <button class="nav-tab" data-target="view-wizard">AI Creator</button>
+      <button class="nav-tab" data-target="view-studio" id="nav-studio-tab" style="display:none;">Studio Editor</button>
+      <button class="nav-tab" data-target="view-pricing">Pricing</button>
+    </div>
+
+    <!-- User & Auth Actions -->
+    <div class="nav-user-area">
+      <!-- Backend Status Pill -->
+      <div class="backend-pill online" id="backend-status-pill" title="Flask Backend API Connectivity">
+        <span class="pulse-dot"></span>
+        <span class="status-label">Backend Connected</span>
+      </div>
+
+      <!-- Plan Status Badge -->
+      <span class="plan-pill free" id="nav-plan-pill">Free Tier</span>
+
+      <!-- Auth Buttons -->
+      <div id="auth-logged-out" class="auth-buttons">
+        <button class="btn btn-ghost btn-sm" id="btn-open-login">Sign In</button>
+        <button class="btn btn-primary btn-sm" id="btn-open-register">Get Started</button>
+      </div>
+
+      <div id="auth-logged-in" class="user-profile-menu" style="display:none;">
+        <span class="user-greeting" id="user-display-name">Alex Dev</span>
+        <button class="btn btn-secondary btn-sm" id="btn-open-upgrade">Upgrade (₹20)</button>
+        <button class="btn btn-ghost btn-sm btn-icon" id="btn-logout" title="Sign Out">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Multi-View Canvas Container -->
+  <main class="studio-viewport">
+
+    <!-- VIEW 1: LANDING OVERVIEW -->
+    <section class="view-pane active" id="view-landing">
+      <!-- Hero Header -->
+      <div class="landing-hero">
+        <div class="editorial-badge">
+          <span class="sparkle">✦</span> Craft Engineering for High-Stakes Careers
+        </div>
+        <h1 class="hero-headline">
+          Resumes Crafted for <em>Human Recruiter</em> &amp; Built for <em>ATS Algorithms</em>.
+        </h1>
+        <p class="hero-subline">
+          Folio combines rule-based deterministic ATS parsing with targeted AI bullet polishing to convert raw experience notes into high-impact, single-column ATS-proven documents.
+        </p>
+
+        <div class="hero-cta-group">
+          <button class="btn btn-primary btn-lg" id="btn-hero-launch">
+            <span>Launch Resume Studio</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </button>
+          <button class="btn btn-outline btn-lg" id="btn-hero-wizard">
+            <span>⚡ AI Guided Builder</span>
+          </button>
+        </div>
+
+        <div class="audience-ribbon">
+          <span class="ribbon-item">🎓 Computer Science Graduates</span>
+          <span class="dot-separator">•</span>
+          <span class="ribbon-item">💼 Full Stack Engineers</span>
+          <span class="dot-separator">•</span>
+          <span class="ribbon-item">🚀 Tech Product Managers</span>
+          <span class="dot-separator">•</span>
+          <span class="ribbon-item">📊 Data Analysts</span>
+        </div>
+      </div>
+
+      <!-- Live Interactive ATS Simulator Banner -->
+      <div class="ats-simulator-card">
+        <div class="simulator-header">
+          <div class="sim-title">
+            <span class="sim-badge">Rule-Based Engine</span>
+            <h3>Interactive ATS Score Preview</h3>
+          </div>
+          <p>Test your bullet strength & keyword density against real recruitment parsing rules.</p>
+        </div>
+        <div class="simulator-body">
+          <div class="sim-input-box">
+            <label for="sim-bullet-input">Sample Experience Bullet Point</label>
+            <textarea id="sim-bullet-input" rows="2" placeholder="e.g. Led backend API development using Flask and Python, reducing server response times by 30%.">Led backend API development using Flask and Python, reducing server response times by 30%.</textarea>
+          </div>
+          <div class="sim-result-box">
+            <div class="sim-meter">
+              <span class="sim-score-num" id="sim-score-val">88</span>
+              <span class="sim-score-lbl">ATS Grade</span>
+            </div>
+            <div class="sim-insights" id="sim-insights-list">
+              <div class="insight-chip pass">✓ Action Verb: "Led"</div>
+              <div class="insight-chip pass">✓ Quantified Impact: "30%"</div>
+              <div class="insight-chip pass">✓ Tech Stack Detected: Flask, Python</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature Grid -->
+      <div class="feature-trio">
+        <div class="feature-card">
+          <div class="feature-num">01</div>
+          <h3>Deterministic ATS Engine</h3>
+          <p>Scored against 5 essential pillars: Structure, Job Keywords, Action Verbs, Measurable Quantification, and Formatting cleanliness.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-num">02</div>
+          <h3>Inline AI Bullet Polisher</h3>
+          <p>Refine weak, passive sentences into concise single-line statements starting with power verbs without leaving the editing editor.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-num">03</div>
+          <h3>Single-Column ATS PDFs</h3>
+          <p>Export single-column A4 PDFs generated server-side via fpdf2 that guarantee 100% parse accuracy across Workday, Taleo, and Greenhouse.</p>
+        </div>
+      </div>
+
+      <!-- Template Showroom -->
+      <div class="template-showroom">
+        <div class="section-heading">
+          <h2>Proven Minimalist Layouts</h2>
+          <p>Designed strictly in single-column format to maximize legibility and algorithm parsing.</p>
+        </div>
+
+        <div class="template-cards-grid">
+          <div class="template-card active" data-template="minimal">
+            <div class="template-preview-frame">
+              <img src="/images/templates/minimal_cover.svg" alt="Minimal Template Cover" class="template-cover-img" onerror="this.style.display='none'">
+              <div class="mock-line title"></div>
+              <div class="mock-line sub"></div>
+              <div class="mock-line divider"></div>
+              <div class="mock-line body"></div>
+              <div class="mock-line body short"></div>
+            </div>
+            <div class="template-meta">
+              <h4>Minimal</h4>
+              <p>Clean monochromatic dark accents for tech & engineering roles.</p>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="modern">
+            <div class="template-preview-frame modern">
+              <img src="/images/templates/modern_cover.svg" alt="Modern Template Cover" class="template-cover-img" onerror="this.style.display='none'">
+              <div class="mock-line title blue"></div>
+              <div class="mock-line sub"></div>
+              <div class="mock-line divider blue"></div>
+              <div class="mock-line body"></div>
+              <div class="mock-line body short"></div>
+            </div>
+            <div class="template-meta">
+              <h4>Modern</h4>
+              <p>Contemporary royal blue headers and crisp section rules.</p>
+            </div>
+          </div>
+
+          <div class="template-card" data-template="classic">
+            <div class="template-preview-frame classic">
+              <img src="/images/templates/classic_cover.svg" alt="Classic Serif Cover" class="template-cover-img" onerror="this.style.display='none'">
+              <div class="mock-line title serif"></div>
+              <div class="mock-line sub"></div>
+              <div class="mock-line divider serif"></div>
+              <div class="mock-line body"></div>
+              <div class="mock-line body short"></div>
+            </div>
+            <div class="template-meta">
+              <h4>Classic Serif</h4>
+              <p>Timeless serif typography for finance, consulting & legal fields.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 2: USER DASHBOARD -->
+    <section class="view-pane" id="view-dashboard">
+      <div class="dashboard-container">
+        <!-- Email Verification Banner (hidden once verified) -->
+        <div class="verify-email-banner" id="verify-email-banner" style="display:none;">
+          <span>⚠️ Please verify your email to secure your account.</span>
+          <button class="btn btn-sm btn-outline" id="btn-open-verify-banner">Verify Now</button>
+        </div>
+
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+          <div class="user-welcome">
+            <h2 id="dash-greeting">Welcome back</h2>
+            <p>Manage your saved resumes, run ATS evaluations, or generate tailored cover letters.</p>
+          </div>
+          <div class="dashboard-actions">
+            <button class="btn btn-outline" id="btn-dash-wizard">
+              <span>⚡ AI Resume Generator</span>
+            </button>
+            <button class="btn btn-primary" id="btn-dash-create">
+              <span>+ Create Blank Resume</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Metric Stat Cards -->
+        <div class="dash-metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon">📄</div>
+            <div class="metric-info">
+              <span class="metric-val" id="stat-resume-count">0</span>
+              <span class="metric-lbl">Total Saved Resumes</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon">🎯</div>
+            <div class="metric-info">
+              <span class="metric-val" id="stat-ats-remaining">3</span>
+              <span class="metric-lbl">ATS Checks Remaining</span>
+            </div>
+            <button class="btn btn-ghost btn-xs" id="btn-stat-upgrade">Upgrade Limit</button>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-icon">⭐</div>
+            <div class="metric-info">
+              <span class="metric-val" id="stat-user-plan">Free</span>
+              <span class="metric-lbl">Current Plan</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Resume Gallery Grid -->
+        <div class="resume-gallery-section">
+          <div class="gallery-toolbar">
+            <h3>Your Resumes</h3>
+            <span class="gallery-count" id="gallery-count-lbl">0 items</span>
+          </div>
+
+          <div class="resumes-grid" id="resumes-list-grid">
+            <!-- Dynamically populated via JS -->
+            <div class="empty-state-card" id="empty-resumes-state">
+              <div class="empty-icon">📁</div>
+              <h4>No Resumes Created Yet</h4>
+              <p>Get started by creating a new blank resume or using our guided AI generator wizard.</p>
+              <button class="btn btn-primary btn-sm" id="btn-empty-create">Create Your First Resume</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 3: AI GUIDED GENERATOR WIZARD -->
+    <section class="view-pane" id="view-wizard">
+      <div class="wizard-container">
+        <!-- Wizard Header -->
+        <div class="wizard-header">
+          <h2>Guided AI Resume Generator</h2>
+          <p>Answer a few key questions and let Gemini AI compose a structured, ATS-ready resume draft.</p>
+          
+          <!-- Step Progress Bar -->
+          <div class="wizard-progress-bar">
+            <div class="progress-step active" data-step="1">1. Personal</div>
+            <div class="progress-step" data-step="2">2. Target Role</div>
+            <div class="progress-step" data-step="3">3. Experience</div>
+            <div class="progress-step" data-step="4">4. Education &amp; Skills</div>
+            <div class="progress-step" data-step="5">5. Review &amp; Generate</div>
+          </div>
+        </div>
+
+        <!-- Wizard Step Panels -->
+        <div class="wizard-card">
+          <!-- Step 1: Personal -->
+          <div class="wizard-step-content active" id="wiz-step-1">
+            <h3>Step 1: Candidate Contact Details</h3>
+            <div class="form-grid dual">
+              <div class="form-group">
+                <label for="wiz-name">Full Name *</label>
+                <input type="text" id="wiz-name" placeholder="e.g. Asha Rao" value="Asha Rao">
+              </div>
+              <div class="form-group">
+                <label for="wiz-email">Email Address *</label>
+                <input type="email" id="wiz-email" placeholder="asha.rao@example.com" value="asha.rao@example.com">
+              </div>
+              <div class="form-group">
+                <label for="wiz-phone">Phone Number</label>
+                <input type="text" id="wiz-phone" placeholder="+91 90000 00000" value="+91 90000 00000">
+              </div>
+              <div class="form-group">
+                <label for="wiz-location">Location (City, Country)</label>
+                <input type="text" id="wiz-location" placeholder="Hyderabad, India" value="Hyderabad, India">
+              </div>
+              <div class="form-group">
+                <label for="wiz-linkedin">LinkedIn URL</label>
+                <input type="text" id="wiz-linkedin" placeholder="linkedin.com/in/asharao" value="linkedin.com/in/asharao">
+              </div>
+              <div class="form-group">
+                <label for="wiz-portfolio">Portfolio / GitHub</label>
+                <input type="text" id="wiz-portfolio" placeholder="asharao.dev" value="asharao.dev">
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Target Role -->
+          <div class="wizard-step-content" id="wiz-step-2">
+            <h3>Step 2: Target Position</h3>
+            <div class="form-group">
+              <label for="wiz-target-title">Target Job Title *</label>
+              <input type="text" id="wiz-target-title" placeholder="e.g. Backend Developer / Full Stack Engineer" value="Backend Developer">
+              <span class="field-hint">The AI will align summary and bullet points to match this target role.</span>
+            </div>
+
+            <div class="form-group margin-top">
+              <label for="wiz-career-summary-notes">Raw Professional Summary / Career Goals (Optional)</label>
+              <textarea id="wiz-career-summary-notes" rows="3" placeholder="Briefly describe your career focus or key achievements...">Final-year CS student with 3 full-stack projects and backend intern experience building REST APIs.</textarea>
+            </div>
+          </div>
+
+          <!-- Step 3: Raw Experience Notes -->
+          <div class="wizard-step-content" id="wiz-step-3">
+            <h3>Step 3: Work Experience Notes</h3>
+            <p class="section-desc">Add your work or internship roles. Don't worry about formatting; the AI will polish your raw notes into strong action bullets.</p>
+            
+            <div class="form-group">
+              <label for="wiz-exp-role">Role Title</label>
+              <input type="text" id="wiz-exp-role" value="Backend Developer Intern">
+            </div>
+            <div class="form-grid dual">
+              <div class="form-group">
+                <label for="wiz-exp-company">Company</label>
+                <input type="text" id="wiz-exp-company" value="TechNova Pvt Ltd">
+              </div>
+              <div class="form-group">
+                <label for="wiz-exp-duration">Duration</label>
+                <input type="text" id="wiz-exp-duration" value="May 2025 - Jul 2025">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="wiz-exp-notes">Raw Notes &amp; Achievements (One per line)</label>
+              <textarea id="wiz-exp-notes" rows="4" placeholder="Built 12 REST endpoints used by internal teams&#10;Reduced API response time by adding DB indexes">Built 12 REST API endpoints used by 3 internal teams, cutting reporting time by 40%
+Reduced average API response time by 220ms by adding database indexes and caching</textarea>
+            </div>
+          </div>
+
+          <!-- Step 4: Education & Skills -->
+          <div class="wizard-step-content" id="wiz-step-4">
+            <h3>Step 4: Education &amp; Core Skills</h3>
+            <div class="form-grid dual">
+              <div class="form-group">
+                <label for="wiz-edu-degree">Degree / Field of Study</label>
+                <input type="text" id="wiz-edu-degree" value="B.Tech in Computer Science">
+              </div>
+              <div class="form-group">
+                <label for="wiz-edu-inst">Institution</label>
+                <input type="text" id="wiz-edu-inst" value="JNTU Hyderabad">
+              </div>
+            </div>
+            <div class="form-grid dual">
+              <div class="form-group">
+                <label for="wiz-edu-duration">Year / Duration</label>
+                <input type="text" id="wiz-edu-duration" value="2022 - 2026">
+              </div>
+              <div class="form-group">
+                <label for="wiz-edu-details">GPA / Honors</label>
+                <input type="text" id="wiz-edu-details" value="CGPA: 8.7 / 10">
+              </div>
+            </div>
+            <div class="form-group margin-top">
+              <label for="wiz-skills-list">Skills (Comma-separated)</label>
+              <input type="text" id="wiz-skills-list" value="Python, Flask, JavaScript, SQL, REST APIs, Git, Docker">
+            </div>
+          </div>
+
+          <!-- Step 5: Review & Trigger Generation -->
+          <div class="wizard-step-content" id="wiz-step-5">
+            <h3>Step 5: Review &amp; Generate Resume</h3>
+            <div class="wizard-summary-box">
+              <div class="sum-item"><strong>Candidate:</strong> <span id="wiz-sum-name">Asha Rao</span></div>
+              <div class="sum-item"><strong>Target Role:</strong> <span id="wiz-sum-role">Backend Developer</span></div>
+              <div class="sum-item"><strong>Primary Skills:</strong> <span id="wiz-sum-skills">Python, Flask, SQL...</span></div>
+            </div>
+
+            <div class="form-group margin-top">
+              <label for="wiz-template-select">Preferred Template</label>
+              <select id="wiz-template-select">
+                <option value="minimal" selected>Minimal</option>
+              </select>
+              <p class="field-hint">25 templates available — 15 Resume styles and 10 CV (curriculum vitae) styles. You can switch anytime in the Studio.</p>
+            </div>
+
+            <!-- Loading Spinner State -->
+            <div class="ai-generating-overlay" id="wiz-ai-loading" style="display:none;">
+              <div class="ai-spinner"></div>
+              <h4>Gemini AI Composing Your Resume...</h4>
+              <p>Quantifying bullet points and structuring single-column ATS format.</p>
+            </div>
+          </div>
+
+          <!-- Wizard Footer Controls -->
+          <div class="wizard-footer-actions">
+            <button class="btn btn-outline" id="btn-wiz-prev" disabled>Back</button>
+            <button class="btn btn-primary" id="btn-wiz-next">Next Step</button>
+            <button class="btn btn-primary btn-sparkle" id="btn-wiz-submit" style="display:none;">
+              <span>✨ Generate Resume with AI</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 4: SPLIT-PANE RESUME STUDIO EDITOR -->
+    <section class="view-pane" id="view-studio">
+      <div class="studio-editor-layout">
+        <!-- Studio Top Toolbar -->
+        <header class="studio-topbar">
+          <div class="topbar-left">
+            <button class="btn btn-ghost btn-sm" id="btn-studio-back" title="Back to Dashboard">
+              ← Dashboard
+            </button>
+            <div class="resume-title-editor">
+              <input type="text" id="studio-resume-title" value="Untitled Resume" placeholder="Resume Title...">
+              <span class="save-status-badge saved" id="studio-save-status">Saved</span>
+            </div>
+          </div>
+
+          <div class="topbar-center">
+            <!-- Template Quick Switcher -->
+            <div class="template-selector-pill">
+              <label for="studio-template-select">Template:</label>
+              <select id="studio-template-select">
+                <option value="minimal">Minimal</option>
+              </select>
+            <!-- ATS Score Badge -->
+            <div class="ats-quick-score" id="studio-ats-badge" title="Click to open ATS Inspector">
+              <span class="score-dot"></span>
+              <span class="score-text">ATS: Unchecked</span>
+            </div>
+          </div>
+
+          <div class="topbar-right">
+            <!-- Inspector Drawer Toggles -->
+            <button class="btn btn-ghost btn-sm" id="btn-toggle-ats-drawer">
+              🎯 ATS Checker
+            </button>
+            <button class="btn btn-ghost btn-sm" id="btn-toggle-advisor-drawer">
+              💡 Recruiter Advisor
+            </button>
+            <button class="btn btn-ghost btn-sm" id="btn-toggle-cover-drawer">
+              ✉️ AI Cover Letter
+            </button>
+
+            <!-- PDF Download Button -->
+            <button class="btn btn-primary btn-sm" id="btn-studio-pdf-download">
+              <span>📥 Download PDF</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Studio Main Body (Split Pane) -->
+        <div class="studio-split-body">
+          
+          <!-- LEFT PANE: SECTION EDITORS -->
+          <div class="studio-left-pane">
+            
+            <!-- Section Accordion Tabs -->
+            <div class="editor-tabs-header">
+              <button class="editor-tab-btn active" data-sec="sec-personal">Personal</button>
+              <button class="editor-tab-btn" data-sec="sec-summary">Summary</button>
+              <button class="editor-tab-btn" data-sec="sec-experience">Experience</button>
+              <button class="editor-tab-btn" data-sec="sec-projects">Projects</button>
+              <button class="editor-tab-btn" data-sec="sec-education">Education</button>
+              <button class="editor-tab-btn" data-sec="sec-skills">Skills</button>
+              <button class="editor-tab-btn" data-sec="sec-certifications">Certs</button>
+              <button class="editor-tab-btn" data-sec="sec-cv">CV Sections</button>
+              <button class="editor-tab-btn" data-sec="sec-target">Target Job</button>
+            </div>
+
+            <!-- Editor Form Content Area -->
+            <div class="editor-forms-viewport">
+
+              <!-- SECTION: PERSONAL -->
+              <div class="editor-section-panel active" id="sec-personal">
+                <div class="section-title-bar">
+                  <h3>Personal Contact Information</h3>
+                </div>
+                <div class="form-grid dual">
+                  <div class="form-group">
+                    <label for="ed-name">Full Name</label>
+                    <input type="text" id="ed-name" class="sync-input" data-path="personal.name" placeholder="John Doe">
+                  </div>
+                  <div class="form-group">
+                    <label for="ed-email">Email Address</label>
+                    <input type="email" id="ed-email" class="sync-input" data-path="personal.email" placeholder="john@example.com">
+                  </div>
+                  <div class="form-group">
+                    <label for="ed-phone">Phone Number</label>
+                    <input type="text" id="ed-phone" class="sync-input" data-path="personal.phone" placeholder="+1 555-0199">
+                  </div>
+                  <div class="form-group">
+                    <label for="ed-location">Location</label>
+                    <input type="text" id="ed-location" class="sync-input" data-path="personal.location" placeholder="City, State / Country">
+                  </div>
+                  <div class="form-group">
+                    <label for="ed-linkedin">LinkedIn Profile</label>
+                    <input type="text" id="ed-linkedin" class="sync-input" data-path="personal.linkedin" placeholder="linkedin.com/in/username">
+                  </div>
+                  <div class="form-group">
+                    <label for="ed-portfolio">Portfolio / Website</label>
+                    <input type="text" id="ed-portfolio" class="sync-input" data-path="personal.portfolio" placeholder="portfolio.dev">
+                  </div>
+                </div>
+              </div>
+
+              <!-- SECTION: SUMMARY -->
+              <div class="editor-section-panel" id="sec-summary">
+                <div class="section-title-bar">
+                  <h3>Professional Summary</h3>
+                  <button class="btn btn-ghost btn-xs btn-sparkle" id="btn-ai-summary-improve">✨ Polish Summary</button>
+                </div>
+                <div class="form-group">
+                  <label for="ed-summary">2-3 sentence overview tailored to your target role</label>
+                  <textarea id="ed-summary" class="sync-input" data-path="summary" rows="5" placeholder="Passionate developer with 3+ years..."></textarea>
+                </div>
+              </div>
+
+              <!-- SECTION: EXPERIENCE -->
+              <div class="editor-section-panel" id="sec-experience">
+                <div class="section-title-bar">
+                  <h3>Work Experience</h3>
+                  <button class="btn btn-outline btn-xs" id="btn-add-experience">+ Add Role</button>
+                </div>
+                <div id="experience-items-container" class="repeater-container">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- SECTION: PROJECTS -->
+              <div class="editor-section-panel" id="sec-projects">
+                <div class="section-title-bar">
+                  <h3>Key Projects</h3>
+                  <button class="btn btn-outline btn-xs" id="btn-add-project">+ Add Project</button>
+                </div>
+                <div id="projects-items-container" class="repeater-container">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- SECTION: EDUCATION -->
+              <div class="editor-section-panel" id="sec-education">
+                <div class="section-title-bar">
+                  <h3>Education</h3>
+                  <button class="btn btn-outline btn-xs" id="btn-add-education">+ Add Education</button>
+                </div>
+                <div id="education-items-container" class="repeater-container">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- SECTION: SKILLS -->
+              <div class="editor-section-panel" id="sec-skills">
+                <div class="section-title-bar">
+                  <h3>Skills &amp; Competencies</h3>
+                </div>
+                <div class="form-group">
+                  <label for="ed-skills">Enter skills separated by commas</label>
+                  <textarea id="ed-skills" class="sync-input" data-path="skills_csv" rows="4" placeholder="Python, Flask, JavaScript, SQL, REST APIs, Git, Docker"></textarea>
+                </div>
+              </div>
+
+              <!-- SECTION: CERTIFICATIONS -->
+              <div class="editor-section-panel" id="sec-certifications">
+                <div class="section-title-bar">
+                  <h3>Certifications</h3>
+                </div>
+                <div class="form-group">
+                  <label for="ed-certs">Enter certifications (one per line)</label>
+                  <textarea id="ed-certs" class="sync-input" data-path="certs_lines" rows="4" placeholder="AWS Certified Developer&#10;Google Data Analytics Certificate"></textarea>
+                </div>
+              </div>
+
+              <!-- SECTION: CV-ONLY SECTIONS (academic/long-form) -->
+              <div class="editor-section-panel" id="sec-cv">
+                <div class="section-title-bar">
+                  <h3>CV Sections (Academic / Long-Form)</h3>
+                </div>
+                <p class="field-hint" style="margin-bottom:12px;">
+                  These only render when you pick a CV template (Studio &rarr; Template &rarr; CV Templates).
+                  One entry per line.
+                </p>
+                <div class="form-group">
+                  <label for="ed-cv-publications">Publications</label>
+                  <textarea id="ed-cv-publications" class="sync-input" data-path="cv_lines:publications" rows="3" placeholder="Rao, A. (2025). On Caching Strategies. IEEE Conference."></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="ed-cv-research">Research Experience</label>
+                  <textarea id="ed-cv-research" class="sync-input" data-path="cv_lines:research_experience" rows="3" placeholder="Research Assistant, Database Systems Lab (2024-2025)"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="ed-cv-teaching">Teaching Experience</label>
+                  <textarea id="ed-cv-teaching" class="sync-input" data-path="cv_lines:teaching_experience" rows="3" placeholder="Teaching Assistant, Data Structures, Fall 2024"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="ed-cv-conferences">Conferences &amp; Presentations</label>
+                  <textarea id="ed-cv-conferences" class="sync-input" data-path="cv_lines:conferences" rows="3" placeholder="Presented poster at PyCon India 2025"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="ed-cv-grants">Grants &amp; Fellowships</label>
+                  <textarea id="ed-cv-grants" class="sync-input" data-path="cv_lines:grants_fellowships" rows="3" placeholder="Departmental Travel Grant, 2025"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="ed-cv-awards">Awards &amp; Honors</label>
+                  <textarea id="ed-cv-awards" class="sync-input" data-path="cv_lines:awards_honors" rows="3" placeholder="Best Paper Award, 2025"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="ed-cv-affiliations">Professional Affiliations</label>
+                  <textarea id="ed-cv-affiliations" class="sync-input" data-path="cv_lines:affiliations" rows="3" placeholder="ACM Member"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="ed-cv-references">References</label>
+                  <textarea id="ed-cv-references" class="sync-input" data-path="cv_lines:references" rows="3" placeholder="Available upon request"></textarea>
+                </div>
+              </div>
+
+              <!-- SECTION: TARGET JOB CONTEXT -->
+              <div class="editor-section-panel" id="sec-target">
+                <div class="section-title-bar">
+                  <h3>Target Job &amp; Description</h3>
+                </div>
+                <div class="form-group">
+                  <label for="ed-target-title">Target Job Title</label>
+                  <input type="text" id="ed-target-title" class="sync-input" data-path="target_job_title" placeholder="Backend Engineer">
+                </div>
+                <div class="form-group margin-top">
+                  <label for="ed-target-jd">Target Job Description (for ATS Keyword Matching)</label>
+                  <textarea id="ed-target-jd" class="sync-input" data-path="target_job_description" rows="6" placeholder="Paste the job description from LinkedIn / Indeed to evaluate ATS keyword match score..."></textarea>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- RIGHT PANE: LIVE TACTILE PAPER CANVAS -->
+          <div class="studio-right-pane">
+            <div class="canvas-control-strip">
+              <span class="canvas-lbl">Live A4 Paper Preview</span>
+              <div class="zoom-controls">
+                <button class="btn btn-ghost btn-xs" id="btn-zoom-out">-</button>
+                <span class="zoom-lbl" id="zoom-val">100%</span>
+                <button class="btn btn-ghost btn-xs" id="btn-zoom-in">+</button>
+              </div>
+            </div>
+
+            <!-- Scrollable Paper Container -->
+            <div class="paper-scroll-wrapper">
+              <div class="a4-paper-sheet minimal" id="paper-render-canvas">
+                <!-- Live HTML Preview Rendered via JS -->
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT DRAWER: ATS & RECRUITER ADVISOR -->
+        <aside class="studio-drawer" id="studio-drawer-panel">
+          <div class="drawer-header">
+            <div class="drawer-tabs-nav">
+              <button class="drawer-tab-btn active" data-target="drawer-ats-content">🎯 ATS</button>
+              <button class="drawer-tab-btn" data-target="drawer-advisor-content">💡 Advisor</button>
+              <button class="drawer-tab-btn" data-target="drawer-cover-content">✉️ Cover Letter</button>
+            </div>
+            <button class="btn btn-ghost btn-xs btn-icon" id="btn-close-drawer">✕</button>
+          </div>
+
+          <div class="drawer-body">
+            <!-- TAB 1: ATS SCORE CHECKER -->
+            <div class="drawer-content active" id="drawer-ats-content">
+              <div class="ats-score-hero">
+                <div class="score-circle-meter" id="ats-score-circle">
+                  <span class="score-big" id="ats-score-number">--</span>
+                  <span class="score-sub">/ 100</span>
+                </div>
+                <button class="btn btn-primary btn-sm btn-block margin-top" id="btn-run-ats-check">
+                  🎯 Run Deterministic ATS Check
+                </button>
+                <span class="checks-rem-hint" id="drawer-checks-rem">3 free checks remaining</span>
+              </div>
+
+              <!-- Score Breakdown -->
+              <div class="ats-breakdown-section" id="ats-breakdown-box" style="display:none;">
+                <h4>Score Breakdown</h4>
+                <div class="breakdown-list" id="ats-breakdown-items">
+                  <!-- Dynamically populated -->
+                </div>
+
+                <h4>Matched Keywords</h4>
+                <div class="tags-cloud" id="ats-matched-tags"></div>
+
+                <h4>Missing Keywords</h4>
+                <div class="tags-cloud missing" id="ats-missing-tags"></div>
+
+                <h4>Actionable Suggestions</h4>
+                <ul class="suggestions-list" id="ats-suggestions-list"></ul>
+              </div>
+            </div>
+
+            <!-- TAB 2: AI RECRUITER ADVISOR -->
+            <div class="drawer-content" id="drawer-advisor-content">
+              <div class="advisor-intro">
+                <p>Get qualitative feedback from a virtual senior technical recruiter.</p>
+                <button class="btn btn-primary btn-sm btn-block btn-sparkle" id="btn-run-advisor">
+                  ✨ Analyze with Recruiter AI
+                </button>
+              </div>
+
+              <div id="advisor-results-box" class="advisor-results" style="display:none;">
+                <div class="advisor-card">
+                  <h4>Overall Impression</h4>
+                  <p id="adv-impression">--</p>
+                </div>
+                <div class="advisor-card">
+                  <h4>Strengths</h4>
+                  <ul id="adv-strengths"></ul>
+                </div>
+                <div class="advisor-card warning">
+                  <h4>Recommended Improvements</h4>
+                  <ul id="adv-improvements"></ul>
+                </div>
+                <div class="advisor-card info">
+                  <h4>Suggested Skills to Add</h4>
+                  <div class="tags-cloud" id="adv-skills"></div>
+                </div>
+              </div>
+
+              <!-- AI RECRUITER ASSISTANT: Resume vs Job Analysis (uses the Job Description pasted in the Cover Letter tab) -->
+              <button class="btn btn-primary btn-sm btn-block btn-sparkle margin-top" id="btn-run-recruiter-analysis" type="button">
+                🔍 Analyze My Resume vs a Job
+              </button>
+              <span class="field-error" id="jd-error-msg">Please paste a job description in the Cover Letter tab first.</span>
+
+              <div id="recruiter-analysis-loading" style="display:none;" class="cover-loading-box margin-top">
+                <div class="processing-spinner" style="width:28px; height:28px;"></div>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;">AI Recruiter is analyzing your resume against this job...</p>
+              </div>
+
+              <div id="recruiter-analysis-results" style="display:none;" class="margin-top">
+                <div class="ats-score-hero">
+                  <div class="score-circle-meter" id="recruiter-match-circle">
+                    <span class="score-big" id="recruiter-match-score">--</span>
+                    <span class="score-sub">% Match</span>
+                  </div>
+                </div>
+                <div class="advisor-card">
+                  <h4>Strongly Matching Skills</h4>
+                  <div class="tags-cloud" id="rec-strong-matches"></div>
+                </div>
+                <div class="advisor-card warning">
+                  <h4>Missing / Weak Skills</h4>
+                  <div class="tags-cloud missing" id="rec-missing-areas"></div>
+                </div>
+                <div class="advisor-card info">
+                  <h4>Important Job Keywords</h4>
+                  <div class="tags-cloud" id="rec-keywords"></div>
+                </div>
+                <div class="advisor-card">
+                  <h4>Relevant Experience Match</h4>
+                  <p id="rec-exp-match">--</p>
+                </div>
+                <div class="advisor-card">
+                  <h4>Resume Strengths</h4>
+                  <ul id="rec-strengths"></ul>
+                </div>
+                <div class="advisor-card warning">
+                  <h4>Areas for Improvement</h4>
+                  <ul id="rec-improvements"></ul>
+                </div>
+                <div class="advisor-card info">
+                  <h4>Recruiter Verdict</h4>
+                  <p id="rec-verdict">--</p>
+                </div>
+              </div>
+
+              <!-- AI RECRUITER ASSISTANT CHATBOT -->
+              <div class="recruiter-chat-section margin-top">
+                <h4>🤖 AI Recruiter Assistant</h4>
+                <div class="chat-window" id="recruiter-chat-window">
+                  <div class="chat-msg chat-msg-ai"><p>Hello! I have your resume ready. Paste a job description in the Cover Letter tab, then ask me anything about your fit, resume improvements, skills, keywords, or interview prep.</p></div>
+                </div>
+                <div class="chat-typing-indicator" id="recruiter-chat-loading" style="display:none;">AI Recruiter is typing...</div>
+                <div class="chat-input-row">
+                  <textarea id="recruiter-chat-input" rows="1" placeholder="Ask the AI Recruiter anything... (Enter to send, Shift+Enter for new line)"></textarea>
+                  <button class="btn btn-primary btn-xs" id="btn-send-recruiter-chat" type="button">Send</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 3: JOB SEARCH & AI COVER LETTER GENERATOR -->
+            <div class="drawer-content" id="drawer-cover-content">
+              <div class="cover-letter-box">
+                <div class="cover-pro-badge">
+                  <span class="sparkle">⭐</span>
+                  <strong>Premium Pro AI Feature</strong>
+                </div>
+                <p class="cover-desc">Find a job, paste its description, then head to the Advisor tab to analyze your resume and chat with the AI recruiter - or generate a tailored cover letter right here.</p>
+
+                <!-- 1. JOB SEARCH -->
+                <div class="recruiter-section margin-top">
+                  <h4>Job Search</h4>
+                  <div class="form-group">
+                    <label for="recruiter-job-title">Job Title</label>
+                    <input type="text" id="recruiter-job-title" placeholder="e.g. Python Backend Developer">
+                  </div>
+                  <div class="form-group">
+                    <label for="recruiter-job-location">Location</label>
+                    <input type="text" id="recruiter-job-location" placeholder="e.g. Hyderabad">
+                  </div>
+                  <button class="btn btn-secondary btn-sm btn-block" id="btn-search-linkedin-jobs" type="button">
+                    🔗 Search Jobs on LinkedIn
+                  </button>
+                  <p class="cover-desc margin-top">Search for a suitable job, copy its job description, and paste it below to analyze your resume (Advisor tab) and generate a tailored cover letter.</p>
+                </div>
+
+                <!-- 2. JOB DESCRIPTION (shared by Analysis, Chat & Cover Letter) -->
+                <div class="form-group margin-top">
+                  <label for="cover-job-desc">Job Description</label>
+                  <textarea id="cover-job-desc" rows="5" placeholder="Paste the complete job description here..."></textarea>
+                  <span class="field-error" id="jd-error-msg-cover">Please paste a job description first.</span>
+                </div>
+
+                <!-- 3. AI COVER LETTER GENERATOR -->
+                <button class="btn btn-primary btn-sm btn-block btn-sparkle margin-top" id="btn-run-cover-letter" type="button">
+                  ✨ Generate Tailored Cover Letter
+                </button>
+              </div>
+
+              <div id="cover-letter-loading" style="display:none;" class="cover-loading-box margin-top">
+                <div class="processing-spinner" style="width:28px; height:28px;"></div>
+                <p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;">AI is writing your personalized cover letter...</p>
+              </div>
+
+              <div id="cover-letter-results" style="display:none;" class="margin-top">
+                <div class="cover-result-header">
+                  <label for="cover-letter-output">Generated Cover Letter Draft:</label>
+                  <span class="cover-badge">Ready</span>
+                </div>
+                <textarea id="cover-letter-output" rows="9" class="cover-textarea"></textarea>
+                <div class="cover-actions-row margin-top">
+                  <button class="btn btn-secondary btn-xs" id="btn-copy-cover">📋 Copy to Clipboard</button>
+                  <button class="btn btn-outline btn-xs" id="btn-download-cover">📥 Download (.txt)</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+    <!-- VIEW 5: PRICING & UPGRADE PAGE -->
+    <section class="view-pane" id="view-pricing">
+      <div class="pricing-container">
+        <div class="pricing-header">
+          <span class="editorial-badge">Transparent Pricing</span>
+          <h2>Simple, Honest Pricing for Job Seekers</h2>
+          <p>Unlimited ATS checks, premium cover letter generator, and priority AI assistance.</p>
+        </div>
+
+        <div class="pricing-cards-grid">
+          <!-- Free Plan -->
+          <div class="pricing-card">
+            <div class="card-tier">Free Tier</div>
+            <div class="card-price">₹0 <span>/ forever</span></div>
+            <p class="tier-desc">Perfect for building and downloading your first ATS-proven resume.</p>
+            <ul class="tier-features">
+              <li>✓ Unlimited Single-Column PDF Exports</li>
+              <li>✓ 3 Free Deterministic ATS Checks</li>
+              <li>✓ All 3 Minimalist Templates</li>
+              <li>✓ Inline AI Bullet Polishing</li>
+            </ul>
+            <button class="btn btn-outline btn-block" id="btn-price-free" disabled>Current Tier</button>
+          </div>
+
+          <!-- Premium Plan -->
+          <div class="pricing-card featured">
+            <div class="featured-badge">MOST POPULAR</div>
+            <div class="card-tier">Premium Pro</div>
+            <div class="card-price">₹20 <span>/ month</span></div>
+            <p class="tier-desc">For active job applicants needing unlimited ATS audits and cover letters.</p>
+            <ul class="tier-features">
+              <li>✓ Everything in Free Tier</li>
+              <li>✓ <strong>Unlimited ATS Checks</strong></li>
+              <li>✓ <strong>AI Recruiter Advisor Feedback</strong></li>
+              <li>✓ <strong>AI Cover Letter Generator</strong></li>
+              <li>✓ Priority AI Processing</li>
+            </ul>
+            <button class="btn btn-primary btn-block btn-sparkle" id="btn-price-upgrade">
+              <span>Upgrade to Premium (₹20)</span>
+            </button>
+            <button class="btn btn-ghost btn-xs btn-block margin-top" id="btn-price-downgrade" style="display:none;">
+              Downgrade to Free Tier (Demo)
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FORGOT PASSWORD MODAL -->
+  <div class="modal-overlay" id="forgot-password-modal">
+    <div class="modal-card">
+      <button class="modal-close" id="btn-close-forgot-modal">✕</button>
+      <div class="modal-header">
+        <h3>Reset your password</h3>
+      </div>
+      <div class="modal-body">
+
+        <!-- STEP 1: request a code -->
+        <form id="form-forgot-request" class="auth-form active">
+          <p class="field-hint" style="margin-bottom:14px;">
+            Enter your account email — we'll send you a 6-digit reset code.
+          </p>
+          <div class="form-group">
+            <label for="forgot-email-input">Email Address</label>
+            <input type="email" id="forgot-email-input" required placeholder="asha@example.com">
+          </div>
+          <button type="submit" class="btn btn-primary btn-block margin-top">Send Reset Code</button>
+        </form>
+
+        <!-- STEP 2: enter code + new password -->
+        <form id="form-forgot-reset" class="auth-form">
+          <p class="field-hint" style="margin-bottom:14px;">
+            Enter the code sent to <strong id="forgot-email-target">your email</strong> and choose a new password.
+          </p>
+          <div class="form-group">
+            <label for="forgot-otp-input">Reset Code</label>
+            <input type="text" id="forgot-otp-input" inputmode="numeric" pattern="\d{6}" maxlength="6"
+                   placeholder="123456" autocomplete="one-time-code" required>
+          </div>
+          <div class="form-group">
+            <label for="forgot-new-password">New Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="forgot-new-password" required minlength="8" placeholder="••••••••">
+              <button type="button" class="toggle-password-visibility" data-target="forgot-new-password" aria-label="Show password">👁️</button>
+            </div>
+            <p id="forgot-password-hint" class="password-hint">8+ characters • Uppercase letter • Lowercase letter • Number • Special character</p>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block margin-top">Reset Password</button>
+          <p class="field-hint" style="margin-top:14px;">
+            Didn't get it?
+            <a href="#" id="btn-resend-forgot-otp">Resend code</a>
+            <span id="forgot-resend-cooldown-note"></span>
+          </p>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- EMAIL VERIFICATION MODAL -->
+  <div class="modal-overlay" id="verify-modal">
+    <div class="modal-card">
+      <button class="modal-close" id="btn-close-verify-modal">✕</button>
+      <div class="modal-header">
+        <h3>Verify your email</h3>
+      </div>
+      <div class="modal-body">
+        <p class="field-hint" style="margin-bottom:14px;">
+          We sent a 6-digit code to <strong id="verify-email-target">your email</strong>.
+          Enter it below to activate your account.
+        </p>
+        <form id="form-verify-otp">
+          <div class="form-group">
+            <label for="verify-otp-input">Verification Code</label>
+            <input type="text" id="verify-otp-input" inputmode="numeric" pattern="\d{6}" maxlength="6"
+                   placeholder="123456" autocomplete="one-time-code" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block margin-top">Verify Email</button>
+        </form>
+        <p class="field-hint" style="margin-top:14px;">
+          Didn't get it?
+          <a href="#" id="btn-resend-otp">Resend code</a>
+          <span id="resend-cooldown-note"></span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUTHENTICATION MODAL -->
+  <div class="modal-overlay" id="auth-modal">
+    <div class="modal-card">
+      <button class="modal-close" id="btn-close-auth-modal">✕</button>
+      <div class="modal-header">
+        <div class="auth-tabs-toggle">
+          <button class="auth-tab active" id="tab-login">Sign In</button>
+          <button class="auth-tab" id="tab-register">Register</button>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <!-- LOGIN FORM -->
+        <form id="form-login" class="auth-form active">
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <input type="email" id="login-email" required value="demo@resumebuilder.test">
+          </div>
+          <div class="form-group">
+            <label for="login-password">Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="login-password" required value="Password123">
+              <button type="button" class="toggle-password-visibility" data-target="login-password" aria-label="Show password">👁️</button>
+            </div>
+          </div>
+          <button type="button" id="btn-open-forgot-password" class="link-btn" style="display:block; text-align:right; margin:-8px 0 4px; background:none; border:none; padding:0; cursor:pointer; font-size:0.75rem; color:var(--text-subtle); text-decoration:underline;">Forgot password?</button>
+          <button type="submit" class="btn btn-primary btn-block margin-top">Sign In to Studio</button>
+          <div class="auth-divider"><span>or</span></div>
+          <div id="google-signin-btn-login" class="google-signin-slot"></div>
+          <div class="social-auth-buttons">
+            <a href="#" class="btn btn-outline btn-block social-auth-btn" data-provider="github">
+              <span class="social-auth-icon">🐙</span> Continue with GitHub
+            </a>
+            <a href="#" class="btn btn-outline btn-block social-auth-btn" data-provider="linkedin">
+              <span class="social-auth-icon">in</span> Continue with LinkedIn
+            </a>
+          </div>
+        </form>
+
+        <!-- REGISTER FORM -->
+        <form id="form-register" class="auth-form">
+          <div class="form-group">
+            <label for="reg-name">Full Name</label>
+            <input type="text" id="reg-name" required placeholder="Asha Rao">
+          </div>
+          <div class="form-group">
+            <label for="reg-email">Email Address</label>
+            <input type="email" id="reg-email" required placeholder="asha@example.com">
+            <p class="field-note">Use your real email — temporary/disposable addresses are rejected.</p>
+          </div>
+          <div class="form-group">
+            <label for="reg-password">Password</label>
+            <div class="password-input-wrapper">
+              <input type="password" id="reg-password" required minlength="8" placeholder="••••••••">
+              <button type="button" class="toggle-password-visibility" data-target="reg-password" aria-label="Show password">👁️</button>
+            </div>
+            <p id="reg-password-hint" class="password-hint">8+ characters • Uppercase letter • Lowercase letter • Number • Special character</p>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block margin-top">Create Account</button>
+          <div class="auth-divider"><span>or</span></div>
+          <div id="google-signin-btn-register" class="google-signin-slot"></div>
+          <div class="social-auth-buttons">
+            <a href="#" class="btn btn-outline btn-block social-auth-btn" data-provider="github">
+              <span class="social-auth-icon">🐙</span> Continue with GitHub
+            </a>
+            <a href="#" class="btn btn-outline btn-block social-auth-btn" data-provider="linkedin">
+              <span class="social-auth-icon">in</span> Continue with LinkedIn
+            </a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT CHECKOUT MODAL -->
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal-card payment-checkout-card">
+      <button class="modal-close" id="btn-close-payment-modal">✕</button>
+      
+      <!-- Checkout Header -->
+      <div class="checkout-header">
+        <div class="checkout-badge-row">
+          <span class="security-badge">🔒 256-Bit SSL Secured</span>
+          <span class="merchant-badge">✓ Verified Merchant</span>
+        </div>
+        <div class="checkout-title-row">
+          <div>
+            <h3 class="checkout-title">Folio Premium Pro Upgrade</h3>
+            <p class="checkout-subtitle">Lifetime access & unlimited AI generation</p>
+          </div>
+          <div class="checkout-price-box">
+            <span class="currency">₹</span>
+            <span class="amount">20</span>
+            <span class="period">one-time</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Checkout Body -->
+      <div class="checkout-body">
+        <!-- Payment Methods Sidebar / Tabs -->
+        <div class="payment-tabs">
+          <button class="pay-tab active" data-pay-method="upi">
+            <span class="pay-tab-icon">📱</span>
+            <span class="pay-tab-text">UPI / PhonePe QR</span>
+          </button>
+          <button class="pay-tab" data-pay-method="card">
+            <span class="pay-tab-icon">💳</span>
+            <span class="pay-tab-text">Credit / Debit Card</span>
+          </button>
+          <button class="pay-tab" data-pay-method="netbanking">
+            <span class="pay-tab-icon">🏛️</span>
+            <span class="pay-tab-text">Net Banking</span>
+          </button>
+          <button class="pay-tab" data-pay-method="wallet">
+            <span class="pay-tab-icon">👛</span>
+            <span class="pay-tab-text">Wallets</span>
+          </button>
+        </div>
+
+        <!-- Payment Content Panels -->
+        <div class="payment-panels">
+          
+          <!-- 1. CARD FORM -->
+          <form id="form-pay-card" class="pay-form-panel">
+            <div class="card-brand-bar">
+              <span class="card-type-label">Accepted Cards:</span>
+              <div class="card-icons">
+                <span class="card-chip active" id="chip-visa">VISA</span>
+                <span class="card-chip" id="chip-mastercard">Mastercard</span>
+                <span class="card-chip" id="chip-rupay">RuPay</span>
+                <span class="card-chip" id="chip-amex">AMEX</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="pay-card-number">Card Number</label>
+              <div class="input-with-icon">
+                <input type="text" id="pay-card-number" placeholder="4532 •••• •••• 8892" maxlength="19" required>
+                <span class="input-card-brand" id="input-card-brand-badge">💳</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="pay-card-name">Cardholder Name</label>
+              <input type="text" id="pay-card-name" placeholder="Asha Rao" required>
+            </div>
+
+            <div class="form-row-2">
+              <div class="form-group">
+                <label for="pay-card-expiry">Expiry Date</label>
+                <input type="text" id="pay-card-expiry" placeholder="MM / YY" maxlength="5" required>
+              </div>
+              <div class="form-group">
+                <label for="pay-card-cvv">CVV / CVC</label>
+                <input type="password" id="pay-card-cvv" placeholder="•••" maxlength="4" required>
+              </div>
+            </div>
+
+            <div class="checkout-test-helper">
+              <button type="button" class="btn-test-fill" id="btn-fill-test-card">⚡ Autofill Test Card</button>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-pay-action">
+              <span>Pay ₹20.00 Securely</span>
+              <span class="lock-icon">🔒</span>
+            </button>
+          </form>
+
+          <!-- 2. UPI FORM -->
+          <form id="form-pay-upi" class="pay-form-panel active">
+            <div class="upi-qr-section">
+              <div class="upi-qr-wrapper">
+                <div class="qr-scanner-box" id="dynamic-qr-box">
+                  <img src="/images/upi_qr1.jpeg" alt="PhonePe UPI Scan & Pay QR Code" class="upi-qr-image">
+                </div>
+                <div class="qr-timer-badge">⏱️ Scan with PhonePe / GPay / Paytm</div>
+              </div>
+              <p class="upi-helper-text">Scan & Pay ₹20 using <strong>PhonePe</strong>, <strong>Google Pay</strong>, <strong>Paytm</strong>, or <strong>BHIM UPI</strong></p>
+            </div>
+
+            <div class="form-group" style="margin: 16px 0;">
+              <label for="pay-upi-utr">12-Digit UPI UTR / Transaction Ref No. <span style="color: red;">*</span></label>
+              <input type="text" id="pay-upi-utr" placeholder="e.g. 423819028491 (from PhonePe/GPay receipt)" maxlength="16" required style="font-family: var(--font-mono); font-weight: 600; letter-spacing: 0.5px;">
+              <span class="field-note" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;">Enter the 12-digit UTR number from your PhonePe / GPay receipt after scanning to verify payment.</span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-pay-action btn-sparkle" id="btn-confirm-upi-paid">
+              <span>Verify Payment & Activate Premium Pro</span>
+              <span class="lock-icon">🔒</span>
+            </button>
+
+            <div class="divider-text"><span>OR ENTER VPA FOR DIRECT UPI CHECKOUT</span></div>
+
+            <div class="form-group">
+              <label for="pay-upi-id">Virtual Payment Address (VPA)</label>
+              <div class="upi-input-group">
+                <input type="text" id="pay-upi-id" placeholder="username@upi / mobile@okhdfcbank">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-verify-upi">Verify VPA</button>
+              </div>
+              <span class="upi-verified-badge" id="upi-verified-badge" style="display: none;">✓ UPI ID Verified</span>
+            </div>
+          </form>
+
+          <!-- 3. NET BANKING FORM -->
+          <form id="form-pay-netbanking" class="pay-form-panel">
+            <label class="section-label">Popular Banks</label>
+            <div class="bank-grid">
+              <label class="bank-card">
+                <input type="radio" name="selected_bank" value="HDFC Bank" checked>
+                <div class="bank-content">
+                  <span class="bank-logo-text">HDFC</span>
+                  <span class="bank-name">HDFC Bank</span>
+                </div>
+              </label>
+              <label class="bank-card">
+                <input type="radio" name="selected_bank" value="State Bank of India">
+                <div class="bank-content">
+                  <span class="bank-logo-text">SBI</span>
+                  <span class="bank-name">State Bank</span>
+                </div>
+              </label>
+              <label class="bank-card">
+                <input type="radio" name="selected_bank" value="ICICI Bank">
+                <div class="bank-content">
+                  <span class="bank-logo-text">ICICI</span>
+                  <span class="bank-name">ICICI Bank</span>
+                </div>
+              </label>
+              <label class="bank-card">
+                <input type="radio" name="selected_bank" value="Axis Bank">
+                <div class="bank-content">
+                  <span class="bank-logo-text">AXIS</span>
+                  <span class="bank-name">Axis Bank</span>
+                </div>
+              </label>
+            </div>
+
+            <div class="form-group margin-top">
+              <label for="pay-all-banks">All Indian & Global Banks</label>
+              <select id="pay-all-banks">
+                <option value="">-- Choose Other Bank --</option>
+                <option value="Kotak Mahindra Bank">Kotak Mahindra Bank</option>
+                <option value="Punjab National Bank">Punjab National Bank</option>
+                <option value="Bank of Baroda">Bank of Baroda</option>
+                <option value="Canara Bank">Canara Bank</option>
+                <option value="Union Bank of India">Union Bank of India</option>
+                <option value="IndusInd Bank">IndusInd Bank</option>
+                <option value="Federal Bank">Federal Bank</option>
+                <option value="IDFC FIRST Bank">IDFC FIRST Bank</option>
+              </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-pay-action margin-top">
+              <span>Proceed to Net Banking (₹20.00)</span>
+              <span class="lock-icon">🔒</span>
+            </button>
+          </form>
+
+          <!-- 4. WALLETS FORM -->
+          <form id="form-pay-wallet" class="pay-form-panel">
+            <div class="wallet-list">
+              <label class="wallet-item">
+                <input type="radio" name="selected_wallet" value="Paytm Wallet" checked>
+                <div class="wallet-info">
+                  <span class="wallet-icon">📱</span>
+                  <div>
+                    <span class="wallet-title">Paytm Wallet</span>
+                    <span class="wallet-sub">Instant 1-click checkout</span>
+                  </div>
+                </div>
+              </label>
+              <label class="wallet-item">
+                <input type="radio" name="selected_wallet" value="Amazon Pay">
+                <div class="wallet-info">
+                  <span class="wallet-icon">📦</span>
+                  <div>
+                    <span class="wallet-title">Amazon Pay</span>
+                    <span class="wallet-sub">Use Amazon Pay balance</span>
+                  </div>
+                </div>
+              </label>
+              <label class="wallet-item">
+                <input type="radio" name="selected_wallet" value="PhonePe Wallet">
+                <div class="wallet-info">
+                  <span class="wallet-icon">🟣</span>
+                  <div>
+                    <span class="wallet-title">PhonePe Wallet</span>
+                    <span class="wallet-sub">PhonePe linked balance</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block btn-pay-action margin-top">
+              <span>Pay ₹20.00 from Wallet</span>
+              <span class="lock-icon">🔒</span>
+            </button>
+          </form>
+
+        </div>
+      </div>
+
+      <!-- Processing Simulation Overlay -->
+      <div class="payment-processing-overlay" id="payment-processing-overlay" style="display: none;">
+        <div class="processing-card">
+          <div class="processing-spinner"></div>
+          <h4 id="proc-status-title">Securing Bank Authorization...</h4>
+          <p id="proc-status-desc">Communicating with banking gateway. Please do not refresh.</p>
+          <div class="proc-progress-bar"><div class="proc-progress-fill" id="proc-progress-fill"></div></div>
+          <div class="proc-security-badge">🔒 256-Bit Bank Grade Encryption</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- PAYMENT SUCCESS / RECEIPT MODAL -->
+  <div class="modal-overlay" id="receipt-modal">
+    <div class="modal-card receipt-card">
+      <button class="modal-close" id="btn-close-receipt-modal">✕</button>
+
+      <div class="receipt-header">
+        <div class="receipt-success-badge">✓</div>
+        <h3 class="receipt-title">Payment Successful!</h3>
+        <p class="receipt-subtitle">Your account is upgraded to Premium Pro Lifetime.</p>
+      </div>
+
+      <div class="receipt-body" id="receipt-details-body">
+        <!-- Dynamically rendered receipt table and info -->
+      </div>
+
+      <div class="receipt-footer">
+        <button class="btn btn-secondary" id="btn-print-receipt">🖨️ Print Receipt</button>
+        <button class="btn btn-primary" id="btn-continue-studio">Continue to Studio ✨</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT FAILED MODAL -->
+  <div class="modal-overlay" id="payment-failed-modal">
+    <div class="modal-card status-card failed">
+      <button class="modal-close" id="btn-close-failed-modal">✕</button>
+      <div class="status-icon-wrapper failed">❌</div>
+      <h3 class="status-title">Payment Failed</h3>
+      <p class="status-desc" id="failed-modal-desc">The transaction was declined by your bank or payment gateway.</p>
+      <div class="status-tx-info" id="failed-tx-info">Transaction Reference: <code id="failed-tx-id">TXN_FAILED</code></div>
+      <div class="status-actions">
+        <button class="btn btn-outline" id="btn-cancel-failed">Close</button>
+        <button class="btn btn-primary" id="btn-retry-payment">Try Again 🔄</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT PENDING MODAL -->
+  <div class="modal-overlay" id="payment-pending-modal">
+    <div class="modal-card status-card pending">
+      <button class="modal-close" id="btn-close-pending-modal">✕</button>
+      <div class="status-icon-wrapper pending">⏱️</div>
+      <h3 class="status-title">Payment Pending</h3>
+      <p class="status-desc">Awaiting authorization from your UPI app / bank gateway. Please complete payment on your phone.</p>
+      <div class="status-tx-info" id="pending-tx-info">Transaction Reference: <code id="pending-tx-id">TXN_PENDING</code></div>
+      <div class="status-actions">
+        <button class="btn btn-outline" id="btn-check-pending-status">Check Status 🔄</button>
+        <button class="btn btn-primary" id="btn-simulate-complete-pending">Complete Authorization ✓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PAYMENT CANCELLED MODAL -->
+  <div class="modal-overlay" id="payment-cancelled-modal">
+    <div class="modal-card status-card cancelled">
+      <button class="modal-close" id="btn-close-cancelled-modal">✕</button>
+      <div class="status-icon-wrapper cancelled">⚠️</div>
+      <h3 class="status-title">Payment Cancelled</h3>
+      <p class="status-desc">You cancelled the payment transaction. No charges were made.</p>
+      <div class="status-actions">
+        <button class="btn btn-primary" id="btn-reopen-checkout">Reopen Checkout 💳</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
